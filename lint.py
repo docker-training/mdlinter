@@ -21,7 +21,14 @@ for filename in files:
 
         for line in f:
 
-            # are we inside a code block?            
+            # code fences need a blank line around them
+            if prev is not None:
+                if '```' in line and not codeblock and not prev.isspace():
+                    throw(filename, lineno, line, 'Code blocks need a blank line before')
+                if '```' in prev and not codeblock and not line.isspace():
+                    throw(filename, lineno, line, 'Code blocks need a blank line after')
+
+            # are we inside a code block?
             if "```" in line:
                 codeblock = (codeblock + 1)%2
 
