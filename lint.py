@@ -65,6 +65,10 @@ for filename in files:
             if command and len(line.rstrip()) > 90:
                 throw(filename, lineno, line, 'Commands must be <= 90 characters')
 
+            # figures end with /
+            if re.compile("!\[.*\]\(.*\)").match(line.lstrip()) and line.rstrip()[-1] is not '/':
+                throw(filename, lineno, line, 'Figures must end with /')
+
             lineno += 1
             prev = line
             prevcommand = command
