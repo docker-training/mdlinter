@@ -15,7 +15,9 @@ for filename in files:
       
         codeblock = 0
         enumstep = 0
+        iscommand = 0
         prev = None
+        prevcommand = 0
         lineno = 1
         stepmarker = re.compile("^([0-9]\.)")
 
@@ -53,8 +55,19 @@ for filename in files:
                 if not pattern.match(line) and not (stepmarker.match(line) or re.compile("^([0-9][0-9]\.)").match(line)) and not line.isspace():
                     throw(filename, lineno, line, 'Text in an enumerated step should be indented by 4 spaces')
 
+            # is this line part of a command?
+            if 'centos@' in line or 'ubuntu@' in line or (prevcommand and (prev.rstrip()[-1] == '\\' or prev.rstrip()[-1] == '`')):
+                command = 1
+            else:
+                command = 0
+
+            # commands maximum 90 char
+            if command and len(line.rstrip()) > 90:
+                throw(filename, lineno, line, 'Commands must be <= 90 characters')
+
             lineno += 1
             prev = line
+            prevcommand = command
          
         # must end in newline
         if line[-1] != '\n':
