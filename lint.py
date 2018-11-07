@@ -56,7 +56,7 @@ for filename in files:
                     throw(filename, lineno, line, 'Text in an enumerated step should be indented by 4 spaces')
 
             # is this line part of a command?
-            if 'centos@' in line or 'ubuntu@' in line or (prevcommand and (prev.rstrip()[-1] == '\\' or prev.rstrip()[-1] == '`')):
+            if 'centos@' in line or 'ubuntu@' in line or re.compile("PS:.*>").match(line.lstrip()) or (prevcommand and (prev.rstrip()[-1] == '\\' or prev.rstrip()[-1] == '`')):
                 command = 1
             else:
                 command = 0
