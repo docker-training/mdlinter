@@ -22,4 +22,4 @@ In the directory that contains the HTML code you want to check, run:
  - no double blank lines inside code blocks
  - code blocks should be surrounded by a blank line before and after
  - code block lines <= 90 char
- - broken URLs in HTML files
+ - broken URLs in Markdown files
