@@ -40,9 +40,9 @@ for filename in files:
             if re.compile("^#").match(line):
                 enumstep = 0
 
-            # no double blank lines inside code blocks
-            if codeblock == 1 and prev.isspace() and line.isspace():
-                throw(filename, lineno, line, 'No double blank lines allowed in code blocks')
+            # no double blank lines
+            if prev is not None and prev.isspace() and line.isspace():
+                throw(filename, lineno, line, 'No double blank lines')
 
             # steps 1-9 need two spaces after the dot
             if not codeblock and stepmarker.match(line):
