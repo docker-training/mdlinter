@@ -2,29 +2,29 @@
 
 for file in $(find /raw -name '*.md')
 do 
-    #echo $file
     for line in $(cat $file)
     do
-       if [[ $line == [http* ]]
-       then
-           #echo $line
-           url=`echo $line | cut -d "(" -f2 | cut -d ")" -f1`
-           #echo $url
+        if [[ $line == *"](http"* ]]
+        then
+            url=`echo $line | egrep -o '\]\(h.*)' | sed 's|[]()]||g'`
 
-           status_code=$(curl -o -I -L -s -w "%{http_code}\n" $url)
-           #echo $status_code
+            # bail out on private repos
+            if [[ ("$url" == *"docker-training/exercises"*) || ("$url" == *"docker-training/presentations"*) || ("$url" == *"docker-training/communication-templates"*) ]]
+            then
+                continue
+            fi
 
-          if [ $status_code -ge "200" ] && [ $status_code -lt "300" ]
-          then
-               #echo "status check succeeded"
-               :
-           else
-               echo $file
-               echo "broken url:" $url
-               echo "---"
-           fi
-       fi
+            status_code=$(curl -o -I -L -s -w "%{http_code}\n" $url)
 
+            if [[ $status_code -ge "200" ]] && [[ $status_code -lt "300" ]]
+            then
+                :
+            else
+                echo $file
+                echo "broken url:" $url
+                echo "---"
+            fi
+        fi
     done
 done 
 
