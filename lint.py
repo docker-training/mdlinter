@@ -14,10 +14,16 @@ for filename in files:
     with open(filename) as f:
       
         codeblock = 0
+        prev_codeblock = 0
         enumstep = 0
-        iscommand = 0
+        prev_enumstep = 0
+        bullets = 0
+        prev_bullets = 0
+        command = 0
+        prev_command = 0
+        yamlhead = 0
+        prev_yamlhead = 0
         prev = None
-        prevcommand = 0
         lineno = 1
         stepmarker = re.compile("^([0-9]\.)")
 
@@ -40,6 +46,23 @@ for filename in files:
             if re.compile("^#").match(line):
                 enumstep = 0
 
+            # are we inside a bullet list?
+            if not codeblock and len(line.lstrip())>1 and line.lstrip()[0:2] == '- ':
+                bullets = 1
+            else:
+                bullets = 0
+
+            # are we inside a yaml header?
+            if not codeblock and "---" in line:
+                yamlhead = (yamlhead + 1)%2
+
+            # bullet lists need a blank line around them at top level
+            if (not enumstep or not prev_enumstep) and (not codeblock or not prev_codeblock) and (not yamlhead or not prev_yamlhead):
+                if bullets and not prev_bullets and not prev.isspace():
+                    throw(filename, lineno, line, 'Bullet lists need a blank line before')
+                elif prev_bullets and not bullets and not line.isspace():
+                    throw(filename, lineno, line, 'Bullet lists need a blank line after')
+  
             # no double blank lines
             if prev is not None and prev.isspace() and line.isspace():
                 throw(filename, lineno, line, 'No double blank lines')
@@ -56,7 +79,7 @@ for filename in files:
                     throw(filename, lineno, line, 'Text in an enumerated step should be indented by 4 spaces')
 
             # is this line part of a command?
-            if 'centos@' in line or 'ubuntu@' in line or re.compile("PS:.*>").match(line.lstrip()) or (prevcommand and (prev.rstrip()[-1] == '\\' or prev.rstrip()[-1] == '`')):
+            if 'centos@' in line or 'ubuntu@' in line or re.compile("PS:.*>").match(line.lstrip()) or (prev_command and (prev.rstrip()[-1] == '\\' or prev.rstrip()[-1] == '`')):
                 command = 1
             else:
                 command = 0
@@ -71,7 +94,11 @@ for filename in files:
 
             lineno += 1
             prev = line
-            prevcommand = command
+            prev_codeblock = codeblock
+            prev_yamlhead = yamlhead
+            prev_enumstep = enumstep
+            prev_bullets = bullets
+            prev_command = command
          
         # must end in newline
         if line[-1] != '\n':
