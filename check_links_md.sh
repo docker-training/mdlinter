@@ -9,7 +9,11 @@ do
             url=`echo $line | egrep -o '\]\(h.*)' | sed 's|[]()]||g'`
 
             # bail out on private repos
-            if [[ ("$url" == *"docker-training/exercises"*) || ("$url" == *"docker-training/presentations"*) || ("$url" == *"docker-training/communication-templates"*) || ("$url" == *"docker/testkit"*) ]]
+            if [[ ("$url" == *"docker-training/exercises"*) || \
+                ("$url" == *"docker-training/presentations"*) || \
+                ("$url" == *"docker-training/communication-templates"*) || \
+                ("$url" == *"docker/testkit"*) || \
+                ("$url" == *"github.com/settings"*) ]]
             then
                 continue
             fi
