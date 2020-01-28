@@ -72,10 +72,11 @@ for filename in files:
                 if line[2:4] != '  ':
                     throw(filename, lineno, line, 'Step numbers "1." through "9." need to be followed by two spaces, ie "4.<space><space>"')
 
-            # four-space indent inside enumerated steps (but not in code blocks):
+            # four-space indent inside enumerated steps (but not in code blocks), more spaces ok for lists:
             if enumstep == 1 and codeblock == 0:
                 pattern = re.compile("^(    [a-zA-Z0-9*-`!(].)")
-                if not pattern.match(line) and not (stepmarker.match(line) or re.compile("^([0-9][0-9]\.)").match(line)) and not line.isspace():
+                listpattern = re.compile("^[ ]{4,}-")
+                if not pattern.match(line) and not listpattern.match(line) and not (stepmarker.match(line) or re.compile("^([0-9][0-9]\.)").match(line)) and not line.isspace():
                     throw(filename, lineno, line, 'Text in an enumerated step should be indented by 4 spaces')
 
             # is this line part of a command?

@@ -18,7 +18,7 @@ do
                 continue
             fi
 
-            status_code=$(curl -o -I -L -s -w "%{http_code}\n" $url)
+            status_code=$(curl -o /dev/null -I -L -s -w "%{http_code}\n" $url)
 
             if [[ $status_code -ge "200" ]] && [[ $status_code -lt "300" ]]
             then
