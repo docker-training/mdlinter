@@ -85,9 +85,9 @@ for filename in files:
             else:
                 command = 0
 
-            # codeblocks maximum 90 char
-            if codeblock and len(line.rstrip()) > 90:
-                throw(filename, lineno, line, 'Code blocks must be <= 90 characters')
+            # codeblocks maximum 95 char
+            if codeblock and len(line.rstrip()) > 95:
+                throw(filename, lineno, line, 'Code blocks must be <= 95 characters')
 
             # figures end with /
             if re.compile("!\[.*\]\(.*\)").match(line.lstrip()) and line.rstrip()[-1] is not '/':
