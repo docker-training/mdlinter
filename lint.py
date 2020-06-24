@@ -1,12 +1,14 @@
 import glob, re
 
 def throw(filename, lineno, line, problem):
-    print('===============')
-    print('Exception in', filename, 'line', lineno)
-    print(line)
-    print(problem)
+    course = filename.split('/')[2]
+    print(course, '===============')
+    print(course, 'Exception in', filename, 'line', lineno)
+    print(course, line)
+    print(course, problem)
 
 files = []
+
 for filename in glob.iglob('/raw/**/*.md', recursive=True):
      files.append(filename)
 
