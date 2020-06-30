@@ -28,6 +28,7 @@ for filename in files:
         prev = None
         lineno = 1
         stepmarker = re.compile("^([0-9]\.)")
+        stepmarker_tens = re.compile("^([0-9][0-9]\.)")
 
         for line in f:
 
@@ -74,9 +75,15 @@ for filename in files:
                 if line[2:4] != '  ':
                     throw(filename, lineno, line, 'Step numbers "1." through "9." need to be followed by two spaces, ie "4.<space><space>"')
 
+            # steps 10+ need two spaces after the dot
+            if not codeblock and stepmarker_tens.match(line):
+                correct = re.compile("^[0-9][0-9]\. [\S]")
+                if not correct.match(line):
+                    throw(filename, lineno, line, 'Step numbers "10." + need to be followed by one space, ie "10.<space>"')
+
             # four-space indent inside enumerated steps (but not in code blocks), more spaces ok for lists:
             if enumstep == 1 and codeblock == 0:
-                pattern = re.compile("^( {4}[a-zA-Z0-9*-`!(|)].)")
+                pattern = re.compile("^ {4}[\S]")
                 listpattern = re.compile("^[ ]{4,}-")
                 if not pattern.match(line) and not listpattern.match(line) and not (stepmarker.match(line) or re.compile("^([0-9][0-9]\.)").match(line)) and not line.isspace():
                     throw(filename, lineno, line, 'Text in an enumerated step should be indented by 4 spaces')
