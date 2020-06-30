@@ -76,7 +76,7 @@ for filename in files:
 
             # four-space indent inside enumerated steps (but not in code blocks), more spaces ok for lists:
             if enumstep == 1 and codeblock == 0:
-                pattern = re.compile("^(    [a-zA-Z0-9*-`!(].)|")
+                pattern = re.compile("^( {4}[a-zA-Z0-9*-`!(|)].)")
                 listpattern = re.compile("^[ ]{4,}-")
                 if not pattern.match(line) and not listpattern.match(line) and not (stepmarker.match(line) or re.compile("^([0-9][0-9]\.)").match(line)) and not line.isspace():
                     throw(filename, lineno, line, 'Text in an enumerated step should be indented by 4 spaces')
