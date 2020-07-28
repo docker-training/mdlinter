@@ -40,7 +40,8 @@ for filename in files:
                     throw(filename, lineno, line, 'Code blocks need a blank line after')
 
             # are we inside a code block?
-            if "```" in line:
+            fences = ["```", "<pre>", "</pre>"]
+            if any(c in line for c in fences):
                 codeblock = (codeblock + 1)%2
 
             # are we inside an enumerated step?
